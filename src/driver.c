@@ -60,15 +60,24 @@ static VAStatus rk_Terminate(VADriverContextP ctx) {
 }
 
 static VAStatus rk_QueryConfigProfiles(VADriverContextP ctx, VAProfile *profile_list, int *num_profiles) {
+    if (!profile_list) {
+        *num_profiles = 5;
+        return VA_STATUS_SUCCESS;
+    }
     profile_list[0] = VAProfileH264Baseline;
     profile_list[1] = VAProfileH264Main;
     profile_list[2] = VAProfileH264High;
-    profile_list[3] = VAProfileHEVCMain;
-    *num_profiles = 4;
+    profile_list[3] = VAProfileH264ConstrainedBaseline;
+    profile_list[4] = VAProfileHEVCMain;
+    *num_profiles = 5;
     return VA_STATUS_SUCCESS;
 }
 
 static VAStatus rk_QueryConfigEntrypoints(VADriverContextP ctx, VAProfile profile, VAEntrypoint *entrypoint_list, int *num_entrypoints) {
+    if (!entrypoint_list) {
+        *num_entrypoints = 2;
+        return VA_STATUS_SUCCESS;
+    }
     entrypoint_list[0] = VAEntrypointVLD;      /* Decode */
     entrypoint_list[1] = VAEntrypointEncSlice; /* Encode */
     *num_entrypoints = 2;

@@ -1,6 +1,7 @@
 #include "rk_vaapi_int.h"
 #include <stdlib.h>
 #include <string.h>
+#include <stdio.h>
 
 VAStatus rk_CreateConfig(
     VADriverContextP ctx,
@@ -88,10 +89,20 @@ VAStatus rk_CreateContext(
                 if (cfg->profile == VAProfileHEVCMain) coding = RK_CODING_HEVC;
                 
                 drv->contexts[i].enc = rk_encoder_create(coding, &rk_cfg);
+                if (!drv->contexts[i].enc) {
+                    drv->contexts[i].in_use = 0;
+                    pthread_mutex_unlock(&drv->mutex);
+                    return VA_STATUS_ERROR_ALLOCATION_FAILED;
+                }
             } else {
                 RK_CodingType coding = RK_CODING_AVC;
                 if (cfg->profile == VAProfileHEVCMain) coding = RK_CODING_HEVC;
                 drv->contexts[i].dec = rk_decoder_create(coding);
+                if (!drv->contexts[i].dec) {
+                    drv->contexts[i].in_use = 0;
+                    pthread_mutex_unlock(&drv->mutex);
+                    return VA_STATUS_ERROR_ALLOCATION_FAILED;
+                }
             }
             
             *context_id = drv->contexts[i].id;

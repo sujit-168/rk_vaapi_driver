@@ -1,17 +1,49 @@
-#include <va/va_backend.h>
+#include "rk_vaapi_int.h"
+#include <stdio.h>
 
 VAStatus rk_stub_unimplemented(VADriverContextP ctx) {
     return VA_STATUS_ERROR_UNIMPLEMENTED;
 }
 
-VAStatus rk_QueryConfigAttributes(VADriverContextP ctx, VAConfigID config_id, VAProfile *profile, VAEntrypoint *entrypoint, VAConfigAttrib *attrib_list, int *num_attribs) {
+VAStatus rk_QueryConfigAttributes(
+    VADriverContextP ctx,
+    VAConfigID config_id,
+    VAProfile *profile,
+    VAEntrypoint *entrypoint,
+    VAConfigAttrib *attrib_list,
+    int *num_attribs
+) {
+    rk_va_driver_data *drv = (rk_va_driver_data *)ctx->pDriverData;
+    pthread_mutex_lock(&drv->mutex);
+
+    rk_va_config *cfg = NULL;
+    for (int i = 0; i < MAX_CONFIGS; i++) {
+        if (drv->configs[i].in_use && drv->configs[i].id == config_id) {
+            cfg = &drv->configs[i];
+            break;
+        }
+    }
+
+    if (!cfg) {
+        pthread_mutex_unlock(&drv->mutex);
+        return VA_STATUS_ERROR_INVALID_CONFIG;
+    }
+
+    if (profile) *profile = cfg->profile;
+    if (entrypoint) *entrypoint = cfg->entrypoint;
+
     if (!attrib_list) {
         *num_attribs = 1;
+        pthread_mutex_unlock(&drv->mutex);
         return VA_STATUS_SUCCESS;
     }
+
+    /* We only really report RTFormat for now */
     attrib_list[0].type = VAConfigAttribRTFormat;
     attrib_list[0].value = VA_RT_FORMAT_YUV420;
     *num_attribs = 1;
+
+    pthread_mutex_unlock(&drv->mutex);
     return VA_STATUS_SUCCESS;
 }
 
