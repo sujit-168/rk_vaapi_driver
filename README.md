@@ -23,7 +23,12 @@ Verified via `vainfo`:
 To build and use this driver, the following components are required:
 
 - **libva (>= 2.x)**: Standard Video Acceleration API library.
-- **rk_hw_base**: Our intermediate middleware library for Rockchip hardware (must be built and available).
+- **rk_hw_base**: Our intermediate middleware library. 
+  ```bash
+  mkdir -p ~/ffmpeg && cd ~/ffmpeg
+  git clone https://github.com/sujit-168/rk_hw_base.git
+  cd rk_hw_base && make
+  ```
 - **librockchip_mpp**: Rockchip Media Process Platform.
 - **librga**: Rockchip Graphics 2D Accelerator.
 - **Standard Linux Build Tools**: `gcc`, `make`, `pkg-config`.
