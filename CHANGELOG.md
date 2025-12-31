@@ -5,6 +5,7 @@ All notable changes and fixes during the development of the `rockchip` VA-API dr
 ## [v1.0.0] - 2026-01-01
 
 ### Added
+- **Hardware Decoding Support**: Implemented `VAEntrypointVLD` support, bridging the driver to the Rockchip MPP decoder. This enables full hardware-accelerated transcoding (Dec -> Enc) with significant performance gains.
 - **vaCreateSurfaces2 Support**: Implemented the modern surface creation interface to support FFmpeg 8.0+ attribute negotiation.
 - **Image Derivation**: Implemented `vaDeriveImage` and `vaMapBuffer` to enable zero-copy data upload via FFmpeg's `hwupload` filter.
 - **Fallback Coded Buffer Detection**: Added logic to automatically locate the bitstream output buffer if not explicitly provided in `vaRenderPicture`, preventing `invalid VAContextID` errors.
@@ -12,6 +13,8 @@ All notable changes and fixes during the development of the `rockchip` VA-API dr
 - **Memory Type Export**: Corrected `vaQuerySurfaceAttributes` to advertise `VA_SURFACE_ATTRIB_MEM_TYPE_VA` and `DRM_PRIME` support.
 
 ### Fixed
+- **Capability Query Stability**: Added critical NULL pointer checks to `vaQueryConfigProfiles` and `vaQueryConfigEntrypoints` to prevent crashes during FFmpeg initialization.
+- **H.264 Constrained Baseline Support**: Added explicit support for `VAProfileH264ConstrainedBaseline` to ensure compatibility with standard streams.
 - **Compilation Errors**:
     - Resolved implicit declaration of `rk_packet_free` in middleware.
     - Fixed `rk_QueryConfigAttributes` signature mismatch with `libva 1.7.0` spec.
