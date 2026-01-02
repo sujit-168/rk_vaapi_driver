@@ -23,6 +23,10 @@ Verified via `vainfo`:
 To build and use this driver, the following components are required:
 
 - **libva (>= 2.x)**: Standard Video Acceleration API library.
+  ```bash
+  sudo apt update
+  sudo apt install libva-dev
+  ```
 - **rk_hw_base**: Our intermediate middleware library. 
   ```bash
   mkdir -p ~/ffmpeg && cd ~/ffmpeg
